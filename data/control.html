@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Panda Bot</title>
+    <style>
+        /* 熊猫主题配色 */
+        :root {
+            --panda-black: #000000;
+            --panda-white: #FFFFFF;
+            --panda-green: #4CAF50;
+            --panda-pink: #FFC0CB;
+            --panda-light-pink: #FFD1DC;
+            --panda-gray: #F5F5F5;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background-color: var(--panda-gray);
+            background-image: linear-gradient(45deg, var(--panda-white) 25%, transparent 25%, 
+                              transparent 75%, var(--panda-white) 75%, var(--panda-white)), 
+                              linear-gradient(45deg, var(--panda-white) 25%, transparent 25%, 
+                              transparent 75%, var(--panda-white) 75%, var(--panda-white));
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 2px solid var(--panda-pink);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--panda-black);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 2em;
+            margin: 10px 0;
+            position: relative;
+        }
+        
+        h1:before, h1:after {
+            content: "🐼";
+            margin: 0 10px;
+        }
+        
+        h3 {
+            margin: 10px 0;
+            color: var(--panda-black);
+            background-color: var(--panda-light-pink);
+            padding: 5px;
+            border-radius: 15px;
+            font-size: 1.2em;
+        }
+
+        button {
+            display: inline-block;
+            height: auto;
+            width: auto;
+            margin-top: 10px;
+            padding: 8px 15px;
+            background-color: var(--panda-green);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            text-decoration: none;
+            line-height: 1.5;
+            text-align: center;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .button {
+            display: inline-block;
+            height: 30px;
+            width: 300px;
+            margin-top: 15px;
+            padding: 8px 15px;
+            background-color: var(--panda-green);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            text-decoration: none;
+            line-height: 2;
+            text-align: center;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: var(--panda-pink);
+            transform: translateY(2px);
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .button-grid3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            justify-content: center;
+            align-content: center;
+            text-align: center;
+            margin: 10px;
+        }
+        
+        .button-grid2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            justify-content: center;
+            align-content: center;
+            text-align: center;
+            margin: 0px;
+        } 
+        
+        .button-grid1 {
+            display: grid;
+            border-radius: 20px;
+            grid-template-columns: repeat(1, 1fr);
+            justify-content: center;
+            align-content: center;
+            text-align: center;
+            margin: 0px;
+            padding: 4px;
+        }
+        
+        /* 控制区域样式 */
+        .control-section {
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            padding: 8px;
+            margin-bottom: 12px;
+            border: 2px solid;
+        }
+        
+        /* 各区域边框颜色 */
+        .motion-section {
+            border-color: #FFD700; /* 金色 */
+            background-color: rgba(255, 215, 0, 0.1);
+        }
+        
+        .emoji-section {
+            border-color: var(--panda-green);
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+        
+        .info-section {
+            border-color: #FF8C00; /* 橙色 */
+            background-color: rgba(255, 140, 0, 0.1);
+        }
+        
+        .led-section {
+            border-color: var(--panda-pink);
+            background-color: rgba(255, 192, 203, 0.1);
+        }
+        
+        /* 电池状态样式 */
+        .battery-status {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .battery-status button {
+            flex: 1;
+            max-width: 150px;
+            font-size: 0.9em;
+            padding: 5px 10px;
+        }
+        
+        /* LED控制按钮样式 */
+        .led-button {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .led-solid {
+            background: linear-gradient(to right, #4CAF50, #4CAF50);
+        }
+        
+        .led-blink {
+            animation: blink 1s infinite;
+        }
+        
+        .led-breath {
+            animation: breath 3s infinite;
+        }
+        
+        .led-flow {
+            background: linear-gradient(90deg, #4CAF50, #FFC0CB, #4CAF50);
+            background-size: 200% 100%;
+            animation: flow 3s infinite linear;
+        }
+        
+        .led-rainbow {
+            background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 700% 100%;
+            animation: rainbow 3s infinite linear;
+        }
+        
+        .led-off {
+            background-color: #888;
+        }
+        
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0.5; }
+        }
+        
+        @keyframes breath {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes flow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+    </style>
+    <script>
+        // 简化 AJAX 请求函数
+        function sendCommand(action) {
+            fetch(`/${action}`)
+                .then(response => response.text())
+                .catch(() => alert('发送失败，请检查设备连接'));
+        }
+
+        function refreshState(url, displayElementId) {
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById(displayElementId).innerText = data;
+                });
+        }
+
+        function setRefreshInterval(url, displayElementId) {
+            setInterval(() => refreshState(url, displayElementId), 1000);
+        }
+
+        // 电池状态刷新
+        const states = [
+            { url: '/get_battery_voltage', displayId: 'batteryVoltageDisplay' },
+            { url: '/get_battery_percentage', displayId: 'batteryPercentageDisplay' },
+        ];
+
+        states.forEach(state => setRefreshInterval(state.url, state.displayId));
+        
+        // LED控制函数
+        function controlLED(mode) {
+            switch(mode) {
+                case 'solid':
+                case 'blinking':
+                case 'breathing':
+                case 'flowing':
+                case 'rainbow':
+                    fetch(`/led_effect?effect=${mode}`)
+                        .then(response => response.text())
+                        .catch(() => alert('发送失败，请检查设备连接'));
+                    break;
+                case 'off':
+                    fetch('/led_off')
+                        .then(response => response.text())
+                        .catch(() => alert('发送失败，请检查设备连接'));
+                    break;
+                case 'on':
+                    fetch('/led_on')
+                        .then(response => response.text())
+                        .catch(() => alert('发送失败，请检查设备连接'));
+                    break;
+                case 'toggle':
+                    fetch('/led_toggle')
+                        .then(response => response.text())
+                        .catch(() => alert('发送失败，请检查设备连接'));
+                    break;
+            }
+        }
+        
+        // LED颜色控制函数
+        function setLEDColor() {
+            const colorPicker = document.getElementById('led-color-picker');
+            const color = colorPicker.value;
+            
+            // 将十六进制颜色转换为RGB
+            const r = parseInt(color.substr(1, 2), 16);
+            const g = parseInt(color.substr(3, 2), 16);
+            const b = parseInt(color.substr(5, 2), 16);
+            
+            fetch(`/led_color?r=${r}&g=${g}&b=${b}`)
+                .then(response => response.text())
+                .catch(() => alert('发送失败，请检查设备连接'));
+        }
+    </script>
+</head>
+<body>
+<div class='container'>
+    <h1>Panda Bot</h1>
+    
+    <!-- 电池状态 -->
+    <div class="battery-status">
+        <button><p>电压：<span id="batteryVoltageDisplay">0</span>V</p></button>
+        <button><p>电量：<span id="batteryPercentageDisplay">0</span>%</p></button>
+    </div>
+    
+    <!-- 运动控制 -->
+    <div class="button-grid1 control-section motion-section">
+        <h3>运动控制</h3>
+        <div class="button-grid1" style="display: flex; justify-content: center;">
+            <button onclick="sendCommand('front')">↑</button>
+        </div>
+        <div class="button-grid2" style="display: flex; justify-content: center;">
+            <button onclick="sendCommand('left')" style="margin-right: 30px">←</button>
+            <button onclick="sendCommand('right')" style="margin-left: 30px">→</button>
+        </div>
+        <div class="button-grid1" style="display: flex; justify-content: center;">
+            <button onclick="sendCommand('back')">↓</button>
+        </div>
+        <div class="button-grid3">
+            <button onclick="sendCommand('stand')">站立</button>
+            <button onclick="sendCommand('shake_left_hand')">抬左手</button>
+            <button onclick="sendCommand('shake_right_hand')">抬右手</button>
+            <button onclick="sendCommand('sit_down')">坐下</button>
+            <button onclick="sendCommand('lie')">趴下</button>
+            <button onclick="sendCommand('sleep')">睡觉</button>
+            <button onclick="sendCommand('stretch')">伸懒腰</button>
+            <button onclick="sendCommand('swing_left_right')">左右摇摆</button>
+            <button onclick="sendCommand('swing_front_back')">前后摇摆</button>
+        </div>
+    </div>
+
+    <!-- 表情控制 -->
+    <div class="button-grid1 control-section emoji-section">
+        <h3>表情控制</h3>
+        <div class="button-grid3">
+            <button onclick="sendCommand('emoji_hi')">嗨</button>
+            <button onclick="sendCommand('emoji_happy')">开心</button>
+            <button onclick="sendCommand('emoji_angry')">生气</button>
+            <button onclick="sendCommand('emoji_love')">喜欢</button>
+            <button onclick="sendCommand('emoji_sad')">伤心</button>
+            <button onclick="sendCommand('emoji_faint')">晕</button>
+            <button onclick="sendCommand('emoji_sick')">难受</button>
+            <!-- <button onclick="sendCommand('emoji_blink')">眨眼</button> -->
+        </div>
+    </div>
+
+    <!-- 信息服务 -->
+    <div class="button-grid1 control-section info-section">
+        <h3>信息服务</h3>
+        <div class="button-grid2">
+            <button onclick="sendCommand('info_time')">时间</button>
+            <button onclick="sendCommand('info_weather')">天气</button>
+        </div>
+    </div>
+
+    <!-- LED控制 -->
+    <div class="button-grid1 control-section led-section">
+        <h3>LED控制</h3>
+        <div class="button-grid3">
+            <button class="led-button led-solid" onclick="controlLED('solid')">常亮</button>
+            <button class="led-button led-blink" onclick="controlLED('blinking')">闪烁</button>
+            <button class="led-button led-breath" onclick="controlLED('breathing')">呼吸</button>
+            <button class="led-button led-flow" onclick="controlLED('flowing')">流水</button>
+            <button class="led-button led-rainbow" onclick="controlLED('rainbow')">彩虹</button>
+            <button class="led-button led-off" onclick="controlLED('off')">关闭</button>
+        </div>
+        <div style="margin-top: 15px;">
+            <label for="led-color-picker" style="display: block; margin-bottom: 5px; font-weight: bold;">LED颜色:</label>
+            <input type="color" id="led-color-picker" value="#ffffff" style="width: 100%; height: 40px; border-radius: 10px; border: none;" onchange="setLEDColor()">
+        </div>
+    </div>
+
+    <input type='button' style="height: 50px;width: 320px" class='button' value="返回" onclick="window.location.href='./index.html'">
+</div>
+
+<p style="text-align: center; margin-top: 20px; font-size: 0.8em; color: #666; font-style: italic;">© 2025, puzhang@amazon.com</p>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Panda Bot</title>
+    <style>
+        /* 熊猫主题配色 */
+        :root {
+            --panda-black: #000000;
+            --panda-white: #FFFFFF;
+            --panda-green: #4CAF50;
+            --panda-pink: #FFC0CB;
+            --panda-light-pink: #FFD1DC;
+            --panda-gray: #F5F5F5;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            background-color: var(--panda-gray);
+            background-image: linear-gradient(45deg, var(--panda-white) 25%, transparent 25%, 
+                              transparent 75%, var(--panda-white) 75%, var(--panda-white)), 
+                              linear-gradient(45deg, var(--panda-white) 25%, transparent 25%, 
+                              transparent 75%, var(--panda-white) 75%, var(--panda-white));
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 2px solid var(--panda-pink);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--panda-black);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        h1:before, h1:after {
+            content: "🐼";
+            margin: 0 10px;
+        }
+
+        .button {
+            display: inline-block;
+            height: 30px;
+            width: 300px;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: var(--panda-green);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            text-decoration: none;
+            line-height: 2;
+            text-align: center;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .button:hover {
+            background-color: var(--panda-pink);
+            transform: translateY(2px);
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .search-box {
+            margin-top: 20px;
+            display: inline-block;
+            height: 30px;
+            width: 300px;
+            padding: 5px 10px;
+            background-color: var(--panda-white);
+            border: 2px solid var(--panda-green);
+            border-radius: 20px;
+            text-align: center;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:focus {
+            border-color: var(--panda-pink);
+            box-shadow: 0 0 8px var(--panda-light-pink);
+            outline: none;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+    </style>
+    
+    <script>
+        // 从ssid.json加载配置
+        function loadConfig() {
+            fetch('/get_ssid_config')
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelector('input[name="ssid"]').value = data.ssid || '';
+                    document.querySelector('input[name="pass"]').value = data.password || '';
+                    document.querySelector('input[name="city"]').value = data.city || '';
+                    document.querySelector('input[name="key"]').value = data.key || '';
+                    
+                    // 显示加载成功消息
+                    showMessage('配置加载成功！', 'green');
+                })
+                .catch(error => {
+                    console.error('加载配置失败:', error);
+                    showMessage('加载配置失败，请重试！', 'red');
+                });
+        }
+        
+        // 保存配置到服务器
+        function saveConfig(event) {
+            event.preventDefault(); // 阻止表单默认提交行为
+            
+            // 获取表单数据
+            const ssid = document.querySelector('input[name="ssid"]').value;
+            const pass = document.querySelector('input[name="pass"]').value;
+            const key = document.querySelector('input[name="key"]').value;
+            const city = document.querySelector('input[name="city"]').value;
+            
+            // 创建FormData对象
+            const formData = new FormData();
+            formData.append('ssid', ssid);
+            formData.append('pass', pass);
+            formData.append('key', key);
+            formData.append('city', city);
+            
+            // 发送POST请求
+            fetch('/connect', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    showMessage('配置保存成功！', 'green');
+                } else {
+                    showMessage('配置保存失败，请重试！', 'red');
+                }
+            })
+            .catch(error => {
+                console.error('保存配置失败:', error);
+                showMessage('保存配置失败，请检查网络连接！', 'red');
+            });
+        }
+        
+        // 显示消息函数
+        function showMessage(text, color) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.style.color = color;
+            message.style.display = 'block';
+            
+            // 3秒后隐藏消息
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</head>
+<body>
+<form id="configForm">
+    <div class='container'>
+        <h1>Panda Bot</h1>
+        <div id="message" style="display: none; margin: 10px 0; padding: 10px; border-radius: 10px;"></div>
+        
+        <input type='text' name='ssid' placeholder='输入WIFI名称' class='search-box'>
+        <input type='password' name='pass' placeholder='输入WIFI密码' class='search-box'>
+        <input type='text' name='key' placeholder='输入心知天气API密钥' class='search-box'>
+        <input type='text' name='city' placeholder='输入城市拼音小写' class='search-box'>
+        
+        <div class="button-group">
+            <input type='button' style="height: 50px;width: 150px" class='button' value="加载" onclick="loadConfig()">
+            <input type='button' style="height: 50px;width: 150px" class='button' value="保存" onclick="saveConfig(event)">
+        </div>
+        
+        <input type='button' style="height: 50px;width: 320px" class='button' value="返回" onclick="window.location.href='./index.html'">
+    </div>
+</form>
+
+<p style="text-align: center; margin-top: 20px; font-size: 0.8em; color: #666; font-style: italic;">© 2025, puzhang@amazon.com</p>
+
+</body>
+</html>
