@@ -153,6 +153,7 @@ PandaBot具有多种动作控制、表情显示、LED灯效和Web远程控制功
   - 信息服务：显示时间和天气信息
   - LED控制：设置LED灯带的效果和颜色
 <img src="doc\images\control.jpg" width="300px" alt="control">
+
 - **配置页面**：
   - 设置WiFi连接信息
   - 设置天气API密钥和城市
